@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud-Native Registration | University Events</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+:root {
+    --primary: #6C63FF;
+    --secondary: #00C9A7;
+    --accent: #FF6B6B;
+    --bg-dark: #0f172a;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: radial-gradient(circle at top, #1e293b, #020617);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Card */
+.container {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(25px);
+    padding: 40px;
+    border-radius: 25px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 0 40px rgba(108,99,255,0.25);
+    transition: 0.4s;
+}
+
+.container:hover {
+    box-shadow: 0 0 60px rgba(108,99,255,0.4);
+}
+
+/* Logo */
+.logo {
+    font-size: 60px;
+    margin-bottom: 10px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+/* Text */
+h2 {
+    color: #fff;
+    margin: 0;
+    font-weight: 600;
+}
+
+.subtitle {
+    color: #94a3b8;
+    margin-bottom: 25px;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+/* Inputs */
+.input-group {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--secondary);
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    font-size: 14px;
+    margin-top: 5px;
+    transition: 0.3s;
+}
+
+input::placeholder {
+    color: #94a3b8;
+}
+
+input:focus, select:focus {
+    background: rgba(255,255,255,0.12);
+    box-shadow: 0 0 10px var(--secondary);
+}
+
+/* Button */
+.btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 20px var(--primary);
+}
+
+/* Success Box */
+#successBox {
+    display: none;
+    animation: fadeUp 5s ease;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Ticket */
+.ticket {
+    background: rgba(255,255,255,0.08);
+    border: 1px dashed var(--secondary);
+    padding: 20px;
+    border-radius: 15px;
+    margin: 20px 0;
+    text-align: left;
+    color: #fff;
+}
+
+.ticket::before,
+.ticket::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: #020617;
+    border-radius: 50%;
+    top: 50%;
+}
+
+.ticket::before { left: -10px; }
+.ticket::after { right: -10px; }
+
+/* Print */
+@media print {
+    body * { visibility: hidden; }
+    #ticketArea, #ticketArea * { visibility: visible; }
+    #ticketArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white;
+        color: black;
+        padding: 30px;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div id="regContent">
+        <div class="logo">☁️</div>
+        <h2>Cloud Portal</h2>
+        <p class="subtitle">Next-Gen Registration</p>
+        
+        <div class="input-group">
+            <label>FULL NAME</label>
+            <input type="text" id="nameIn" placeholder="John Doe">
+        </div>
+        <div class="input-group">
+            <label>STUDENT ID (O-NUMBER)</label>
+            <input type="text" id="idIn" placeholder="O12345">
+        </div>
+        <div class="input-group">
+            <label>SELECT EVENT</label>
+            <select id="eventIn">
+                <option>Tech Fest 2026</option>
+                <option>Cloud Workshop</option>
+                <option>Cultural Gala</option>
+            </select>
+        </div>
+        <button type="button" class="btn" onclick="submitToCloud(); return false;">Confirm Registration</button>
+    </div>
+
+    <div id="successBox">
+        <div style="font-size: 50px;">✅</div>
+        <h2 style="color: var(--g-green);">Registered!</h2>
+        <p style="font-size: 13px; color: #666;">Data synced to local JSON database.</p>
+
+        <div class="ticket" id="ticketArea">
+            <div style="color: var(--g-blue); font-weight: 600; border-bottom: 1px solid #eee; margin-bottom: 10px;">OFFICIAL EVENT PASS</div>
+            <p style="margin: 5px 0;"><strong>Name:</strong> <span id="outName"></span></p>
+            <p style="margin: 5px 0;"><strong>ID:</strong> <span id="outId"></span></p>
+            <p style="margin: 5px 0;"><strong>Event:</strong> <span id="outEvent"></span></p>
+            <div style="font-size: 9px; color: #aaa; margin-top: 10px;">ID: #REG-2026-CLOUD</div>
+        </div>
+
+        <button type="button" class="btn" style="background: var(--g-green);" onclick="window.print()">Download Ticket (PDF)</button>
+        <p onclick="location.reload()" style="color: var(--g-blue); cursor: pointer; text-decoration: underline; margin-top: 15px; font-size: 12px;">Back to Home</p>
+    </div>
+</div>
+
+<script>
+function submitToCloud() {
+    const n = document.getElementById('nameIn').value;
+    const i = document.getElementById('idIn').value;
+    const e = document.getElementById('eventIn').value;
+
+    if (!n || !i) { alert("Please enter details!"); return false; }
+
+    const btn = document.querySelector('.btn');
+    btn.innerText = "Syncing...";
+    btn.disabled = true;
+
+    fetch('http://localhost:3000/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: n, id: i, event: e })
+    })
+    .then(res => res.json())
+    .then(data => {
+        // UI SWAP
+        document.getElementById('regContent').style.display = 'none';
+        
+        document.getElementById('outName').innerText = n;
+        document.getElementById('outId').innerText = i;
+        document.getElementById('outEvent').innerText = e;
+
+        document.getElementById('successBox').style.display = 'block';
+    })
+    .catch(err => {
+        alert("Error: Start your 'node server.js' first!");
+        btn.innerText = "Confirm Registration";
+        btn.disabled = false;
+    });
+
+    return false; // Final block to prevent any reload
+}
+</script>
+
+</body>
+</html>
